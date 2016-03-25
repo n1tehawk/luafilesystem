@@ -136,7 +136,7 @@ typedef struct dir_data {
 
 #ifdef __GNUC__
 /* enable warning message to illustrate issue #65 on Appveyor CI (mingw) */
-# pragma GCC diagnostic warning "-Wunused-function"
+# pragma GCC diagnostic error "-Wunused-function"
 #endif
 
 /*

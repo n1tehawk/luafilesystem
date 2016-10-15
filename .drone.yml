@@ -9,6 +9,11 @@ build:
     - if [ $$arch = 64 ]; then target=x86_64; fi
     #- pacman -S --needed --noconfirm --noprogressbar mingw-w64-${target}-pkg-config
     - pacman -S --needed --noconfirm --noprogressbar mingw-w64-${target}-lua51
+    - echo $PATH
+    - ls /mingw$$arch/bin
+    - which lua ; exit 0
+    - which lua51 ; exit 0
+    - which lua5.1 ; exit 0
     - lua -v
 
 matrix:

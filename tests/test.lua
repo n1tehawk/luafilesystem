@@ -1,6 +1,6 @@
 #!/usr/bin/env lua5.1
 
-local tmp = "/tmp"
+local tmp = os.getenv("TEMP") or "/tmp"
 local sep = string.match (package.config, "[^\n]+")
 local upper = ".."
 

@@ -9,6 +9,7 @@ build:
     - if [ $$arch = 64 ]; then target=x86_64; fi
     #- pacman -S --needed --noconfirm --noprogressbar mingw-w64-${target}-pkg-config
     - pacman -S --needed --noconfirm --noprogressbar mingw-w64-${target}-lua51
+    - lua -v
 
 matrix:
   arch:

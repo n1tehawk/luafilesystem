@@ -112,6 +112,7 @@ typedef struct dir_data {
   #endif
   #define STAT_FUNC     _stati64
   #define LSTAT_FUNC    STAT_FUNC
+  #define mode_t        unsigned short
 #else
   #define _O_TEXT               0
   #define _O_BINARY             0
@@ -637,11 +638,7 @@ static int lock_create_meta (lua_State *L) {
 /*
 ** Convert the inode protection mode to a string.
 */
-#ifdef _WIN32
-static const char *mode2string (unsigned short mode) {
-#else
 static const char *mode2string (mode_t mode) {
-#endif
   if ( S_ISREG(mode) )
     return "file";
   else if ( S_ISDIR(mode) )
@@ -743,25 +740,18 @@ static void push_st_blksize (lua_State *L, STAT_STRUCT *info) {
  /*
 ** Convert the inode protection mode to a permission list.
 */
-
-#ifdef _WIN32
-static const char *perm2string (unsigned short mode) {
+static const char *perm2string (mode_t mode) {
   static char perms[10] = "---------";
   int i;
   for (i=0;i<9;i++) perms[i]='-';
+#ifdef _WIN32
   if (mode  & _S_IREAD)
    { perms[0] = 'r'; perms[3] = 'r'; perms[6] = 'r'; }
   if (mode  & _S_IWRITE)
    { perms[1] = 'w'; perms[4] = 'w'; perms[7] = 'w'; }
   if (mode  & _S_IEXEC)
    { perms[2] = 'x'; perms[5] = 'x'; perms[8] = 'x'; }
-  return perms;
-}
 #else
-static const char *perm2string (mode_t mode) {
-  static char perms[10] = "---------";
-  int i;
-  for (i=0;i<9;i++) perms[i]='-';
   if (mode & S_IRUSR) perms[0] = 'r';
   if (mode & S_IWUSR) perms[1] = 'w';
   if (mode & S_IXUSR) perms[2] = 'x';
@@ -771,9 +761,9 @@ static const char *perm2string (mode_t mode) {
   if (mode & S_IROTH) perms[6] = 'r';
   if (mode & S_IWOTH) perms[7] = 'w';
   if (mode & S_IXOTH) perms[8] = 'x';
+#endif
   return perms;
 }
-#endif
 
 /* permssions string */
 static void push_st_perm (lua_State *L, STAT_STRUCT *info) {

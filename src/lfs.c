@@ -103,22 +103,22 @@ typedef struct dir_data {
 #define LOCK_METATABLE "lock metatable"
 
 #ifdef _WIN32
- #ifdef __BORLANDC__
-  #define lfs_setmode(file, m)   (setmode(_fileno(file), m))
-  #define STAT_STRUCT struct stati64
- #else
-  #define lfs_setmode(file, m)   (_setmode(_fileno(file), m))
-  #define STAT_STRUCT struct _stati64
- #endif
-#define STAT_FUNC _stati64
-#define LSTAT_FUNC STAT_FUNC
+  #ifdef __BORLANDC__
+    #define lfs_setmode(file, m)    (setmode(_fileno(file), m))
+    #define STAT_STRUCT struct stati64
+  #else
+    #define lfs_setmode(file, m)    (_setmode(_fileno(file), m))
+    #define STAT_STRUCT struct _stati64
+  #endif
+  #define STAT_FUNC     _stati64
+  #define LSTAT_FUNC    STAT_FUNC
 #else
-#define _O_TEXT               0
-#define _O_BINARY             0
-#define lfs_setmode(file, m)   ((void)file, (void)m, 0)
-#define STAT_STRUCT struct stat
-#define STAT_FUNC stat
-#define LSTAT_FUNC lstat
+  #define _O_TEXT               0
+  #define _O_BINARY             0
+  #define lfs_setmode(file, m)  ((void)file, (void)m, 0)
+  #define STAT_STRUCT   struct stat
+  #define STAT_FUNC     stat
+  #define LSTAT_FUNC    lstat
 #endif
 
 /*

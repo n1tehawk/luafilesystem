@@ -579,11 +579,15 @@ static int dir_iter_factory (lua_State *L) {
         lua_setmetatable (L, -2);
         d->closed = 0;
 #ifdef _WIN32
-        d->hFile = 0L;
         if (strlen(path) > MAX_PATH-2)
-          luaL_error (L, "path too long: %s", path);
-        else
-          sprintf (d->pattern, "%s/*", path);
+                luaL_error (L, "path too long: %s", path);
+        STAT_STRUCT info;
+        if (STAT_FUNC(path, &info))
+                luaL_error(L, "stat() failed on %s: %s", path, strerror(errno));
+        if (!S_ISDIR(info.st_mode))
+                luaL_error(L, "not a directory: %s", path);
+        d->hFile = 0L;
+        sprintf(d->pattern, "%s/*", path);
 #else
         d->dir = opendir (path);
         if (d->dir == NULL)

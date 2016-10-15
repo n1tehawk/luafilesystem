@@ -28,6 +28,20 @@ function attrdir (path)
         end
 end
 
+-- Helper function to check that `func(...)` raises a Lua error.
+-- If a non-nil `pattern` string is passed, it will also make sure
+-- the error message matches this pattern.
+local function assertError(pattern, func, ...)
+        local ok, err = pcall(func, ...)
+        if ok then
+                error("Error expected but none raised when calling function", 2)
+        end
+        if pattern and (not err:match(pattern)) then
+                error(string.format("Error message '%s' doesn't match '%s'",
+                                    err, pattern), 2)
+        end
+end
+
 -- Checking changing directories
 local current = assert (lfs.currentdir())
 local reldir = string.gsub (current, "^.*%"..sep.."([^"..sep.."])$", "%1")
@@ -154,6 +168,12 @@ io.flush()
 -- Trying to get attributes of a non-existent file
 assert (lfs.attributes ("this couldn't be an actual file") == nil, "could get attributes of a non-existent file")
 assert (type(lfs.attributes (upper)) == "table", "couldn't get attributes of upper directory")
+
+io.write(".")
+io.flush()
+
+-- directory iterator setup should error for non-existent dir
+assertError("No such file or directory", lfs.dir, "/tmp/nonexistent.dir")
 
 io.write(".")
 io.flush()

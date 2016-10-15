@@ -106,9 +106,11 @@ typedef struct dir_data {
   #ifdef __BORLANDC__
     #define lfs_setmode(file, m)    (setmode(_fileno(file), m))
     #define STAT_STRUCT struct stati64
+    #define LOCK_FUNC   locking
   #else
     #define lfs_setmode(file, m)    (_setmode(_fileno(file), m))
     #define STAT_STRUCT struct _stati64
+    #define LOCK_FUNC   _locking
   #endif
   #define STAT_FUNC     _stati64
   #define LSTAT_FUNC    STAT_FUNC
@@ -251,11 +253,7 @@ static int _file_lock (lua_State *L, FILE *fh, const char *mode, const long star
                 len = ftell (fh);
         }
         fseek (fh, start, SEEK_SET);
-#ifdef __BORLANDC__
-        code = locking (fileno(fh), lkmode, len);
-#else
-        code = _locking (fileno(fh), lkmode, len);
-#endif
+        code = LOCK_FUNC(fileno(fh), lkmode, len);
 #else
         struct flock f;
         switch (*mode) {
